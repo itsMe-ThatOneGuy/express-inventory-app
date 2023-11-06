@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
 
-const ItemSchema = new Schema({
+const GameSchema = new Schema({
 	name: { type: String, required: true },
 	description: { type: String, required: true },
 	category: { type: Schema.Types.ObjectId, ref: 'Category', required: true },
@@ -10,8 +10,8 @@ const ItemSchema = new Schema({
 	quantity: { type: Number, required: true },
 });
 
-ItemSchema.virtual('url').get(function () {
+GameSchema.virtual('url').get(function () {
 	return `/catalog/item/${this._id}`;
 });
 
-module.exports = mongoose.model('Item', ItemSchema);
+module.exports = mongoose.model('Game', GameSchema);
