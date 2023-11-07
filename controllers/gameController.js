@@ -4,7 +4,7 @@ const { body, validationResult } = require('express-validator');
 const asyncHandler = require('express-async-handler');
 
 exports.index = asyncHandler(async (req, res, next) => {
-	const [numCategories, numGames] = await Promis.all([
+	const [numCategories, numGames] = await Promise.all([
 		Category.countDocuments({}).exec(),
 		Game.countDocuments({}).exec(),
 	]);
