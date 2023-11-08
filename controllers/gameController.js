@@ -48,3 +48,60 @@ exports.game_create_get = asyncHandler(async (req, res, next) => {
 		categories: allCategories,
 	});
 });
+
+exports.game_create_post = [
+	(req, res, next) => {
+		if (!(req.body.category instanceof Array)) {
+			if (typeof req.body.category === 'undefined') req.body.category = [];
+			else req.body.category = new Array(req.body.category);
+		}
+		next();
+	},
+
+	body('title', 'Title must not be empty').trim().isLength({ min: 1 }).escape(),
+	body('category', 'A category must be selected').isLength({ min: 1 }),
+	body('description', 'Description required').trim().isLength({ min: 1 }),
+	body('price')
+		.trim()
+		.isLength({ min: 1 })
+		.withMessage('Price required')
+		.isCurrency({ allow_negatives: false })
+		.withMessage('Price must be positive number')
+		.isCurrency({ require_decimal: true, digits_after_decimal: [2] })
+		.withMessage('Price Can only have 2 digits after decimal'),
+	body('quantity')
+		.trim()
+		.isInt({ min: 0 })
+		.withMessage('Quantity must not be empty'),
+
+	asyncHandler(async (req, res, next) => {
+		const errors = validationResult(req);
+
+		const game = new Game({
+			title: req.body.title,
+			category: req.body.category,
+			description: req.body.description,
+			price: req.body.price,
+			quantity: req.body.quantity,
+		});
+
+		if (!errors.isEmpty()) {
+			const allCategories = await Category.find().exec();
+
+			for (const category of allCategories) {
+				if (game.category.includes(category._id)) {
+					category.checked = 'true';
+				}
+			}
+			res.render('game_form', {
+				title: 'Add Game to Inventory',
+				category: allCategories,
+				game: game,
+				errors: errors.Array(),
+			});
+		} else {
+			await game.save();
+			res.redirect(game.url);
+		}
+	}),
+];
