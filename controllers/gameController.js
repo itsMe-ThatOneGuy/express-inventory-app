@@ -39,3 +39,12 @@ exports.game_detail = asyncHandler(async (req, res, next) => {
 		game: game,
 	});
 });
+
+exports.game_create_get = asyncHandler(async (req, res, next) => {
+	const allCategories = await Category.find({}).exec();
+
+	res.render('game_form', {
+		title: 'Added Game to Inventory',
+		categories: allCategories,
+	});
+});
