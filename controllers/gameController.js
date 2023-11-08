@@ -15,3 +15,12 @@ exports.index = asyncHandler(async (req, res, next) => {
 		game_count: numGames,
 	});
 });
+
+exports.game_list = asyncHandler(async (req, res, next) => {
+	const allGames = await Game.find({}, 'title game')
+		.sort({ title: 1 })
+		.populate('category')
+		.exec();
+
+	res.render('game_list', { title: 'List of Games', game_list: allGames });
+});
