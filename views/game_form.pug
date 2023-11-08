@@ -20,7 +20,7 @@ block content
             textarea#description.form-control(type='textarea', placeholder='Description' name='description' required='true' value=(undefined===game ? '' : game.description)) 
         div.form-group
             label(for='price') Price:
-            input#price.form-control(type='number', placeholder='Ex: 59.99, 10.00, etc.' name='price' required='true' value=(undefined===game ? '' : game.price)) 
+            input#price.form-control(type='number', placeholder='Ex: 59.99, 10.00, etc.' step='any' name='price' required='true' value=(undefined===game ? '' : game.price)) 
         div.form-group
             label(for='quantity') Quantity:
             input#quantity.form-control(type='number', placeholder='0 - 100+' name='quantity' required='true' value=(undefined===game ? '' : game.quantity)) 
