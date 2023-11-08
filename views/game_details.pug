@@ -1,0 +1,10 @@
+extends layout
+
+block content
+    h1 #{game.title}
+
+    p #[strong !{game.category.name}]
+    p #{game.description}
+    p #[strong Price:] #{game.price}
+    p #[strong Quantity:] #{game.quantity}
+

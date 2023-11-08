@@ -24,3 +24,18 @@ exports.game_list = asyncHandler(async (req, res, next) => {
 
 	res.render('game_list', { title: 'List of Games', game_list: allGames });
 });
+
+exports.game_detail = asyncHandler(async (req, res, next) => {
+	const game = await Game.findById(req.params.id).populate('category').exec();
+
+	if (game === null) {
+		const err = new Error('Game not found');
+		err.status = 404;
+		return next(err);
+	}
+
+	res.render('game_details', {
+		title: game.title,
+		game: game,
+	});
+});

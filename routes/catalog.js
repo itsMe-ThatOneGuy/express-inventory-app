@@ -7,4 +7,6 @@ router.get('/', game_controller.index);
 
 router.get('/games', game_controller.game_list);
 
+router.get('/game/:id', game_controller.game_detail);
+
 module.exports = router;
