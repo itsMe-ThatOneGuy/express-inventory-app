@@ -50,14 +50,6 @@ exports.game_create_get = asyncHandler(async (req, res, next) => {
 });
 
 exports.game_create_post = [
-	(req, res, next) => {
-		if (!(req.body.category instanceof Array)) {
-			if (typeof req.body.category === 'undefined') req.body.category = [];
-			else req.body.category = new Array(req.body.category);
-		}
-		next();
-	},
-
 	body('title', 'Title must not be empty').trim().isLength({ min: 1 }).escape(),
 	body('category', 'A category must be selected').isLength({ min: 1 }),
 	body('description', 'Description required').trim().isLength({ min: 1 }),
