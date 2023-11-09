@@ -15,4 +15,6 @@ router.get('/game/:id', game_controller.game_detail);
 
 router.get('/game/:id/update', game_controller.game_update_get);
 
+router.post('/game/:id/update', game_controller.game_update_post);
+
 module.exports = router;

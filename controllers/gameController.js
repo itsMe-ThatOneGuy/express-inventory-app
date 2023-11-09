@@ -111,3 +111,53 @@ exports.game_update_get = asyncHandler(async (req, res, next) => {
 		game: game,
 	});
 });
+
+exports.game_update_post = [
+	body('title', 'Title must not be empty').trim().isLength({ min: 1 }).escape(),
+	body('category', 'A category must be selected').isLength({ min: 1 }).escape(),
+	body('description', 'Description required')
+		.trim()
+		.isLength({ min: 1 })
+		.escape(),
+	body('price')
+		.trim()
+		.isLength({ min: 1 })
+		.withMessage('Price required')
+		.isCurrency({ allow_negatives: false })
+		.withMessage('Price must be positive number')
+		.isCurrency({ require_decimal: true, digits_after_decimal: [2] })
+		.withMessage('Price must be fromatted as a decimal. Ex. 1.00, 4.69, ect')
+		.escape(),
+	body('quantity')
+		.trim()
+		.isInt({ min: 0 })
+		.withMessage('Quantity must not be empty')
+		.escape(),
+
+	asyncHandler(async (req, res, next) => {
+		const errors = validationResult(req);
+
+		const game = new Game({
+			title: req.body.title,
+			category: req.body.category,
+			description: req.body.description,
+			price: req.body.price,
+			quantity: req.body.quantity,
+			_id: req.params.id,
+		});
+
+		if (!errors.isEmpty()) {
+			const allCategories = await Category.find().exec();
+
+			res.render('game_form', {
+				title: 'Update Game',
+				categories: allCategories,
+				game: game,
+				errors: errors.array(),
+			});
+		} else {
+			const updatedGame = await Game.findByIdAndUpdate(req.params.id, game, {});
+			res.redirect(updatedGame.url);
+		}
+	}),
+];
