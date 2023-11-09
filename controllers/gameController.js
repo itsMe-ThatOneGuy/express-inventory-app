@@ -179,3 +179,14 @@ exports.game_delete_get = asyncHandler(async (req, res, next) => {
 		game: game,
 	});
 });
+
+exports.game_delete_post = asyncHandler(async (req, res, next) => {
+	const game = await Game.findById(req.params.id).populate('category').exec();
+
+	if (game === null) {
+		res.redirect('/catalog/games');
+	}
+
+	await Game.findByIdAndRemove(req.params.id);
+	res.redirect('/catalog/games');
+});
