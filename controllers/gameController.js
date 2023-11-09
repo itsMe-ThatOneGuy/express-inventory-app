@@ -44,7 +44,7 @@ exports.game_create_get = asyncHandler(async (req, res, next) => {
 	const allCategories = await Category.find({}).exec();
 
 	res.render('game_form', {
-		title: 'Added Game to Inventory',
+		title: 'Add Game to Inventory',
 		categories: allCategories,
 	});
 });
@@ -68,7 +68,7 @@ exports.game_create_post = [
 		.isCurrency({ allow_negatives: false })
 		.withMessage('Price must be positive number')
 		.isCurrency({ require_decimal: true, digits_after_decimal: [2] })
-		.withMessage('Price Can only have 2 digits after decimal'),
+		.withMessage('Price must be fromatted as a decimal. Ex. 1.00, 4.69, ect'),
 	body('quantity')
 		.trim()
 		.isInt({ min: 0 })
@@ -88,16 +88,11 @@ exports.game_create_post = [
 		if (!errors.isEmpty()) {
 			const allCategories = await Category.find().exec();
 
-			for (const category of allCategories) {
-				if (game.category.includes(category._id)) {
-					category.checked = 'true';
-				}
-			}
 			res.render('game_form', {
 				title: 'Add Game to Inventory',
-				category: allCategories,
+				categories: allCategories,
 				game: game,
-				errors: errors.Array(),
+				errors: errors.array(),
 			});
 		} else {
 			await game.save();
