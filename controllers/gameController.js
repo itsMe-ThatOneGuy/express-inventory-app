@@ -100,3 +100,22 @@ exports.game_create_post = [
 		}
 	}),
 ];
+
+exports.game_update_get = asyncHandler(async (req, res, next) => {
+	const [game, allCategories] = await Promise.all([
+		Game.findById(req.params.id).populate('category').exec(),
+		Category.find().exec(),
+	]);
+
+	if (game === null) {
+		const err = new Error('Game not found');
+		err.status = 404;
+		return next(err);
+	}
+
+	res.render('game_form', {
+		title: 'Update Game Info',
+		categories: allCategories,
+		game: game,
+	});
+});

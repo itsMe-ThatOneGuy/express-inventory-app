@@ -13,4 +13,6 @@ router.get('/games', game_controller.game_list);
 
 router.get('/game/:id', game_controller.game_detail);
 
+router.get('/game/:id/update', game_controller.game_update_get);
+
 module.exports = router;
