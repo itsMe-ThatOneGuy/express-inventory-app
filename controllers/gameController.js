@@ -51,8 +51,11 @@ exports.game_create_get = asyncHandler(async (req, res, next) => {
 
 exports.game_create_post = [
 	body('title', 'Title must not be empty').trim().isLength({ min: 1 }).escape(),
-	body('category', 'A category must be selected').isLength({ min: 1 }),
-	body('description', 'Description required').trim().isLength({ min: 1 }),
+	body('category', 'A category must be selected').isLength({ min: 1 }).escape(),
+	body('description', 'Description required')
+		.trim()
+		.isLength({ min: 1 })
+		.escape(),
 	body('price')
 		.trim()
 		.isLength({ min: 1 })
@@ -60,11 +63,13 @@ exports.game_create_post = [
 		.isCurrency({ allow_negatives: false })
 		.withMessage('Price must be positive number')
 		.isCurrency({ require_decimal: true, digits_after_decimal: [2] })
-		.withMessage('Price must be fromatted as a decimal. Ex. 1.00, 4.69, ect'),
+		.withMessage('Price must be fromatted as a decimal. Ex. 1.00, 4.69, ect')
+		.escape(),
 	body('quantity')
 		.trim()
 		.isInt({ min: 0 })
-		.withMessage('Quantity must not be empty'),
+		.withMessage('Quantity must not be empty')
+		.escape(),
 
 	asyncHandler(async (req, res, next) => {
 		const errors = validationResult(req);
