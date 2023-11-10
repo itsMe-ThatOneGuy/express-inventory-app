@@ -24,4 +24,6 @@ router.post('/game/:id/delete', game_controller.game_delete_post);
 
 router.get('/categories', category_controller.category_list);
 
+router.get('/category/:id', category_controller.category_detail);
+
 module.exports = router;
