@@ -1,0 +1,17 @@
+extends layout
+
+block content
+    h1=title
+
+    p #{category.name}
+    p #{category.description}
+
+    hr
+    p Do you really want to delete this Category?
+
+    form(method='POST' action='')
+        div.form-group
+            input#id.form-control(type='hidden', name='id', required='true',
+                value=category._id )
+
+        button.btn.btn-primary(type='submit') Delete
