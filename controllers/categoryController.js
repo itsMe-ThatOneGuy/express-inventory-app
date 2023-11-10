@@ -66,3 +66,18 @@ exports.category_create_post = [
 		}
 	}),
 ];
+
+exports.category_update_get = asyncHandler(async (req, res, next) => {
+	const category = await Category.findById(req.params.id).exec();
+
+	if (category === null) {
+		const err = new Error('Category not found');
+		err.status = 404;
+		return next(err);
+	}
+
+	res.render('category_form', {
+		title: 'Update Category Info',
+		category: category,
+	});
+});

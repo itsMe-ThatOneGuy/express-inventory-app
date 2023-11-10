@@ -30,4 +30,6 @@ router.post('/category/create', category_controller.category_create_post);
 
 router.get('/category/:id', category_controller.category_detail);
 
+router.get('/category/:id/update', category_controller.category_update_get);
+
 module.exports = router;
