@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const game_controller = require('../controllers/gameController');
+const category_controller = require('../controllers/categoryController');
 
 router.get('/', game_controller.index);
 
@@ -20,5 +21,7 @@ router.post('/game/:id/update', game_controller.game_update_post);
 router.get('/game/:id/delete', game_controller.game_delete_get);
 
 router.post('/game/:id/delete', game_controller.game_delete_post);
+
+router.get('/categories', category_controller.category_list);
 
 module.exports = router;
