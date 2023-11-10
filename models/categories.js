@@ -8,7 +8,7 @@ const CatagorySchema = new Schema({
 });
 
 CatagorySchema.virtual('url').get(function () {
-	return `/catalog/catagory/${this._id}`;
+	return `/catalog/category/${this._id}`;
 });
 
 module.exports = mongoose.model('Category', CatagorySchema);
