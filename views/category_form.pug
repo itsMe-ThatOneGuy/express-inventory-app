@@ -1,0 +1,12 @@
+extends layout
+
+block content
+    h1= title
+
+    form(method='POST' action='')
+        div.form-group
+            label(for='name') Title:
+            input#title.form-control(type='text', placeholder='Name of Category' name='name' required='true' value=(undefined===category ? '' : category.name) )
+        div.form-group
+            label(for='description') Description:
+            textarea#description.form-control(type='textarea', placeholder='Description' name='description' required='true') #{undefined===category ? '' : category.description}

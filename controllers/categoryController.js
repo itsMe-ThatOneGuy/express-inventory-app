@@ -32,3 +32,9 @@ exports.category_detail = asyncHandler(async (req, res, next) => {
 		categoryGames: gamesInCategory,
 	});
 });
+
+exports.category_create_get = asyncHandler(async (req, res, next) => {
+	res.render('category_form', {
+		title: 'Add Category to Inventory',
+	});
+});
