@@ -7,4 +7,21 @@ html
     title= title
     link(rel='stylesheet', href='/stylesheets/style.css')
   body
-    block content
+    div
+        div
+            div
+                block sidebar
+                    ul
+                        li
+                            a(href='/catalog') Home
+                        li
+                            a(href='/catalog/categories') Categories
+                        li
+                            a(href='/catalog/games') Games
+                        hr
+                        li
+                            a(href='/catalog/category/create') Add a new Category
+                        li
+                            a(href='/catalog/game/create') Add a new Game
+            div
+                block content
