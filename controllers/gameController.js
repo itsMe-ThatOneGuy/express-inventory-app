@@ -110,7 +110,6 @@ exports.game_create_post = [
 			description: req.body.description,
 			price: req.body.price,
 			quantity: req.body.quantity,
-			image: image,
 		});
 
 		if (!errors.isEmpty()) {
