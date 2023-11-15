@@ -134,7 +134,7 @@ exports.game_create_post = [
 
 exports.game_update_get = asyncHandler(async (req, res, next) => {
 	const [game, allCategories] = await Promise.all([
-		Game.findById(req.params.id).populate('category').exec(),
+		Game.findById(req.params.id).populate('category').populate('image').exec(),
 		Category.find().exec(),
 	]);
 
