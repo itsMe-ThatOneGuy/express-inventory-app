@@ -7,6 +7,11 @@ block content
     p #{game.description}
     p #[strong Price:] $#{game.price}
     p #[strong Quantity:] #{game.quantity}
+    if (undifined===game.image)
+        p #[strong Image:] No image
+    else 
+       p #[strong Image:] #{game.image.fileName} | #{game.image.uploadTime}
+
 
     hr
     p
