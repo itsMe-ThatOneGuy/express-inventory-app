@@ -96,7 +96,7 @@ exports.game_create_post = [
 			image = null;
 		} else {
 			image = new Image({
-				fileName: req.body.title,
+				fileName: `${req.body.title}.${req.file.mimetype.split('/')[1]}`,
 				file: {
 					data: req.file.buffer,
 					contentType: req.file.mimetype,
