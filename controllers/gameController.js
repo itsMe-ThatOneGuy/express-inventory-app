@@ -201,14 +201,55 @@ exports.game_update_post = [
 	asyncHandler(async (req, res, next) => {
 		const errors = validationResult(req);
 
-		const game = new Game({
-			title: req.body.title,
-			category: req.body.category,
-			description: req.body.description,
-			price: req.body.price,
-			quantity: req.body.quantity,
-			_id: req.params.id,
-		});
+		let image, game;
+		let currentGame = await Game.findById(req.params.id);
+
+		if (!req.file) {
+			image = undefined;
+		} else {
+			if (currentGame.image === undefined) {
+				image = new Image({
+					fileName: `${req.body.title.split(' ').join('_')}.${
+						req.file.mimetype.split('/')[1]
+					}`,
+					file: {
+						data: req.file.buffer,
+						contentType: req.file.mimetype,
+					},
+				});
+
+				game = new Game({
+					title: req.body.title,
+					category: req.body.category,
+					description: req.body.description,
+					price: req.body.price,
+					quantity: req.body.quantity,
+					image: image,
+					_id: req.params.id,
+				});
+			} else {
+				image = new Image({
+					fileName: `${req.body.title.split(' ').join('_')}.${
+						req.file.mimetype.split('/')[1]
+					}`,
+					file: {
+						data: req.file.buffer,
+						contentType: req.file.mimetype,
+					},
+					_id: currentGame.image._id,
+				});
+
+				game = new Game({
+					title: req.body.title,
+					category: req.body.category,
+					description: req.body.description,
+					price: req.body.price,
+					quantity: req.body.quantity,
+					image: image,
+					_id: req.params.id,
+				});
+			}
+		}
 
 		if (!errors.isEmpty()) {
 			const allCategories = await Category.find().exec();
@@ -220,7 +261,19 @@ exports.game_update_post = [
 				errors: errors.array(),
 			});
 		} else {
-			const updatedGame = await Game.findByIdAndUpdate(req.params.id, game, {});
+			let updatedGame;
+			if (!req.file) {
+				updatedGame = await Game.findByIdAndUpdate(req.params.id, game, {});
+			} else {
+				if (currentGame.image === undefined) {
+					await image.save();
+					updatedGame = await Game.findByIdAndUpdate(req.params.id, game, {});
+				} else {
+					await Image.findByIdAndDelete(image._id, image, {});
+					await image.save();
+					updatedGame = await Game.findByIdAndUpdate(req.params.id, game, {});
+				}
+			}
 			res.redirect(updatedGame.url);
 		}
 	}),
