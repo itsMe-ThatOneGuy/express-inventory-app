@@ -200,7 +200,10 @@ exports.game_update_post = [
 ];
 
 exports.game_delete_get = asyncHandler(async (req, res, next) => {
-	const game = await Game.findById(req.params.id).populate('category').exec();
+	const game = await Game.findById(req.params.id)
+		.populate('category')
+		.populate('image')
+		.exec();
 
 	if (game === null) {
 		res.redirect('/catalog/games');
@@ -214,11 +217,13 @@ exports.game_delete_get = asyncHandler(async (req, res, next) => {
 
 exports.game_delete_post = asyncHandler(async (req, res, next) => {
 	const game = await Game.findById(req.params.id).populate('category').exec();
+	const image = await Image.findById(game.image._id);
 
 	if (game === null) {
 		res.redirect('/catalog/games');
 	}
 
 	await Game.findByIdAndRemove(req.params.id);
+	await Image.findByIdAndRemove(image._id);
 	res.redirect('/catalog/games');
 });
