@@ -93,10 +93,18 @@ exports.game_create_post = [
 	asyncHandler(async (req, res, next) => {
 		const errors = validationResult(req);
 
-		let image;
+		let image, game;
 
 		if (!req.file) {
-			image = null;
+			image = undefined;
+
+			game = new Game({
+				title: req.body.title,
+				category: req.body.category,
+				description: req.body.description,
+				price: req.body.price,
+				quantity: req.body.quantity,
+			});
 		} else {
 			image = new Image({
 				fileName: `${req.body.title}.${req.file.mimetype.split('/')[1]}`,
@@ -105,15 +113,16 @@ exports.game_create_post = [
 					contentType: req.file.mimetype,
 				},
 			});
-		}
 
-		const game = new Game({
-			title: req.body.title,
-			category: req.body.category,
-			description: req.body.description,
-			price: req.body.price,
-			quantity: req.body.quantity,
-		});
+			game = new Game({
+				title: req.body.title,
+				category: req.body.category,
+				description: req.body.description,
+				price: req.body.price,
+				quantity: req.body.quantity,
+				image: image,
+			});
+		}
 
 		if (!errors.isEmpty()) {
 			const allCategories = await Category.find().exec();
@@ -122,11 +131,13 @@ exports.game_create_post = [
 				title: 'Add Game to Inventory',
 				categories: allCategories,
 				game: game,
-				image: image,
 				errors: errors.array(),
 			});
 		} else {
-			await Promise.all([game.save(), image.save()]);
+			if (image !== undefined) {
+				await image.save();
+			}
+			await game.save();
 			res.redirect(game.url);
 		}
 	}),
@@ -152,6 +163,8 @@ exports.game_update_get = asyncHandler(async (req, res, next) => {
 });
 
 exports.game_update_post = [
+	upload.single('image'),
+
 	body('title', 'Title must not be empty').trim().isLength({ min: 1 }).escape(),
 	body('category', 'A category must be selected').isLength({ min: 1 }).escape(),
 	body('description', 'Description required')
@@ -172,6 +185,18 @@ exports.game_update_post = [
 		.isInt({ min: 0 })
 		.withMessage('Quantity must not be empty')
 		.escape(),
+	check('image')
+		.custom((value, { req }) => {
+			if (!req.file) {
+				return true;
+			}
+			if (req.file.size < 1024 * 1024 * 3) {
+				return true;
+			} else {
+				return false;
+			}
+		})
+		.withMessage('Max size for image is 3MB'),
 
 	asyncHandler(async (req, res, next) => {
 		const errors = validationResult(req);
