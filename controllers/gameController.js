@@ -107,7 +107,9 @@ exports.game_create_post = [
 			});
 		} else {
 			image = new Image({
-				fileName: `${req.body.title}.${req.file.mimetype.split('/')[1]}`,
+				fileName: `${req.body.title.split(' ').join('_')}.${
+					req.file.mimetype.split('/')[1]
+				}`,
 				file: {
 					data: req.file.buffer,
 					contentType: req.file.mimetype,
