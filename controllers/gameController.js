@@ -1,7 +1,9 @@
 const Game = require('../models/games');
 const Category = require('../models/categories');
-const { body, validationResult } = require('express-validator');
+const { body, validationResult, check } = require('express-validator');
 const asyncHandler = require('express-async-handler');
+const Image = require('../models/image');
+const upload = require('../middleware/multer');
 
 exports.index = asyncHandler(async (req, res, next) => {
 	const [numCategories, numGames] = await Promise.all([
@@ -50,6 +52,8 @@ exports.game_create_get = asyncHandler(async (req, res, next) => {
 });
 
 exports.game_create_post = [
+	upload.single('image'),
+
 	body('title', 'Title must not be empty').trim().isLength({ min: 1 }).escape(),
 	body('category', 'A category must be selected').isLength({ min: 1 }).escape(),
 	body('description', 'Description required')
@@ -70,9 +74,35 @@ exports.game_create_post = [
 		.isInt({ min: 0 })
 		.withMessage('Quantity must not be empty')
 		.escape(),
+	check('image')
+		.custom((value, { req }) => {
+			if (!req.file) {
+				return true;
+			}
+			if (req.file.size < 1024 * 1024 * 3) {
+				return true;
+			} else {
+				return false;
+			}
+		})
+		.withMessage('Max size for image is 3MB'),
 
 	asyncHandler(async (req, res, next) => {
 		const errors = validationResult(req);
+
+		let image;
+
+		if (!req.file) {
+			image = null;
+		} else {
+			image = new Image({
+				fileName: req.body.title,
+				file: {
+					data: req.file.buffer,
+					contentType: req.file.mimetype,
+				},
+			});
+		}
 
 		const game = new Game({
 			title: req.body.title,
@@ -80,6 +110,7 @@ exports.game_create_post = [
 			description: req.body.description,
 			price: req.body.price,
 			quantity: req.body.quantity,
+			image: image,
 		});
 
 		if (!errors.isEmpty()) {
@@ -89,10 +120,11 @@ exports.game_create_post = [
 				title: 'Add Game to Inventory',
 				categories: allCategories,
 				game: game,
+				image: image,
 				errors: errors.array(),
 			});
 		} else {
-			await game.save();
+			await Promise.all([game.save(), image.save()]);
 			res.redirect(game.url);
 		}
 	}),
