@@ -20,6 +20,7 @@ This would be your MongoDB connection, and can be added to an .env in the projec
 git clone https://github.com/itsMe-ThatOneGuy/express-inventory-app.git
 cd express-inventory-app
 npm install
+node populatedb '<MONGODB_URI>'
 npm run serverstart
 ```
 
